@@ -122,7 +122,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Padding(padding: const EdgeInsets.all(21), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Container(padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 6), decoration: BoxDecoration(color: red, borderRadius: BorderRadius.circular(7)), child: const Text('THE CRICKET HUB', style: TextStyle(fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 1.1))),
               const Spacer(),
-              const Text('MORE THAN\\nJUST A GAME.', style: TextStyle(fontSize: 30, height: 1.02, fontWeight: FontWeight.w900, letterSpacing: -.5)),
+              const Text('MORE THAN\nJUST A GAME.', style: TextStyle(fontSize: 30, height: 1.02, fontWeight: FontWeight.w900, letterSpacing: -.5)),
               const SizedBox(height: 9),
               const SizedBox(width: 245, child: Text('Real stories. Match insights. Quizzes that test your cricket brain.', style: TextStyle(color: Color(0xFFE3D9DD), fontSize: 12, height: 1.45))),
               const SizedBox(height: 15),
