@@ -12,6 +12,7 @@ class MoreFeaturesScreen extends StatelessWidget {
     final features = <(IconData, String, String, Widget)>[
       (Icons.search_rounded, 'Search', 'Find cricket news and topics', const SearchFeatureScreen()),
       (Icons.bookmark_outline_rounded, 'Saved articles', 'Your bookmarked cricket reads', const SavedArticlesScreen()),
+      (Icons.card_giftcard_rounded, 'My rewards', 'Gift winner and delivery status', const MyRewardsScreen()),
       (Icons.notifications_active_outlined, 'Notifications', 'Updates about quizzes and gifts', const NotificationsScreen()),
       (Icons.leaderboard_rounded, 'Leaderboard', 'View quiz rankings', const LeaderboardScreen()),
       (Icons.history_rounded, 'Quiz history', 'Your previous attempts', const QuizHistoryScreen()),
@@ -169,6 +170,52 @@ class ArticleDetailScreen extends StatelessWidget {
           ),
         ),
       ],
+    ),
+  );
+}
+
+class MyRewardsScreen extends StatelessWidget {
+  const MyRewardsScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+    appBar: AppBar(title: const Text('MY REWARDS')),
+    body: FutureBuilder<List<Map<String, dynamic>>>(
+      future: CricketRepository.instance.getMyGiftWinners(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (snapshot.hasError) {
+          return Center(child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Text(snapshot.error.toString(), textAlign: TextAlign.center),
+          ));
+        }
+        final rows = snapshot.data ?? const <Map<String, dynamic>>[];
+        if (rows.isEmpty) {
+          return const _EmptyState(
+            icon: Icons.card_giftcard_outlined,
+            title: 'No rewards yet',
+            message: 'If you qualify for a physical gift, winner verification and delivery progress will appear here.',
+          );
+        }
+        return ListView.builder(
+          padding: const EdgeInsets.all(16),
+          itemCount: rows.length,
+          itemBuilder: (context, index) {
+            final row = rows[index];
+            return Card(
+              child: ListTile(
+                leading: const CircleAvatar(backgroundColor: panel, child: Icon(Icons.card_giftcard, color: gold)),
+                title: Text((row['giftTitle'] ?? row['giftId'] ?? 'Physical gift').toString()),
+                subtitle: Text('Status: ${row['status'] ?? 'Pending review'}'),
+                trailing: const Icon(Icons.chevron_right_rounded),
+              ),
+            );
+          },
+        );
+      },
     ),
   );
 }
