@@ -112,6 +112,39 @@ class _SearchFeatureScreenState extends State<SearchFeatureScreen> {
   }
 }
 
+class ArticleDetailScreen extends StatelessWidget {
+  const ArticleDetailScreen({super.key, required this.title, required this.meta});
+
+  final String title;
+  final String meta;
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+    appBar: AppBar(title: const Text('NEWS ARTICLE')),
+    body: ListView(
+      padding: const EdgeInsets.all(20),
+      children: [
+        Container(
+          height: 190,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(22),
+            gradient: const LinearGradient(colors: [Color(0xFF641525), Color(0xFF171923)]),
+          ),
+          child: const Icon(Icons.sports_cricket_rounded, size: 72, color: gold),
+        ),
+        const SizedBox(height: 20),
+        Text(meta, style: const TextStyle(color: gold, fontSize: 11, fontWeight: FontWeight.w900, letterSpacing: 1)),
+        const SizedBox(height: 10),
+        Text(title, style: const TextStyle(fontSize: 27, height: 1.2, fontWeight: FontWeight.w900)),
+        const SizedBox(height: 16),
+        const Text('Article content will be loaded from the verified news feed. This preview is a placeholder until the RSS ingestion and article detail fields are connected.', style: TextStyle(color: muted, height: 1.6)),
+        const SizedBox(height: 20),
+        const Text('Forword Cricket publishes short cricket reads. Always check the original publisher for full coverage and updates.', style: TextStyle(color: muted, fontSize: 12, height: 1.5)),
+      ],
+    ),
+  );
+}
+
 class NotificationsScreen extends StatelessWidget {
   const NotificationsScreen({super.key});
 
