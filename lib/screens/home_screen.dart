@@ -363,7 +363,12 @@ class _HomeScreenState extends State<HomeScreen> {
       leading: Container(width: 62, height: 62, decoration: BoxDecoration(color: const Color(0xFF283244), borderRadius: BorderRadius.circular(13)), child: const Icon(Icons.newspaper_rounded, color: gold, size: 27)),
       title: Text(title, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 13)),
       subtitle: Padding(padding: const EdgeInsets.only(top: 7), child: Text(meta, style: const TextStyle(color: muted, fontSize: 9, letterSpacing: .6))),
-      onTap: () => _message('News articles will open here when the news feed is connected.'),
+      onTap: () => Navigator.push(
+        context,
+        MaterialPageRoute<void>(
+          builder: (_) => ArticleDetailScreen(title: title, meta: meta),
+        ),
+      ),
     ),
   );
 
