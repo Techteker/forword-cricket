@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../app.dart';
 import '../services/appwrite_service.dart';
 import '../services/cricket_repository.dart';
+import 'cricket_pages.dart';
 
 class MoreFeaturesScreen extends StatelessWidget {
   const MoreFeaturesScreen({super.key});
@@ -21,6 +22,12 @@ class MoreFeaturesScreen extends StatelessWidget {
       (Icons.settings_outlined, 'Settings', 'App preferences', const SettingsScreen()),
       (Icons.rule_rounded, 'Contest rules', 'Eligibility and reward terms', const ContestRulesScreen()),
       (Icons.help_outline_rounded, 'Help & support', 'Get help with your account', const HelpScreen()),
+      ...CricketPageCatalog.pages.map((page) => (
+        Icons.sports_cricket_rounded,
+        page.$1,
+        page.$2,
+        CricketHubPage(title: page.$1, subtitle: page.$2, items: page.$3, filters: page.$4) as Widget,
+      )),
     ];
     return Scaffold(
       appBar: AppBar(title: const Text('EXPLORE MORE')),
