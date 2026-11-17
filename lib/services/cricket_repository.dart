@@ -81,7 +81,7 @@ class CricketRepository {
     final execution = await _functions.createExecution(
       functionId: functionId,
       body: jsonEncode(payload),
-      async: false,
+      xasync: false,
     );
     return execution.responseBody;
   }
