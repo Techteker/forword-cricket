@@ -371,6 +371,18 @@ class _AgeVerificationScreenState extends State<AgeVerificationScreen> {
             padding: const EdgeInsets.only(top: 16),
             child: Text(message!, style: TextStyle(color: verified ? Colors.greenAccent : gold)),
           ),
+        if (verified)
+          Padding(
+            padding: const EdgeInsets.only(top: 18),
+            child: SizedBox(
+              width: double.infinity,
+              child: FilledButton(
+                onPressed: () => Navigator.pop(context, true),
+                style: FilledButton.styleFrom(backgroundColor: red),
+                child: const Text('Continue to quiz'),
+              ),
+            ),
+          ),
         const SizedBox(height: 16),
         const Text('The server must store only the minimum verification result needed for contest eligibility. Do not expose full birth dates in public profile data.', style: TextStyle(color: muted, fontSize: 12, height: 1.5)),
       ],
