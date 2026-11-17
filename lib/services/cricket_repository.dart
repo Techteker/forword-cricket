@@ -23,7 +23,9 @@ class CricketRepository {
     String tableId, {
     List<String> queries = const [],
   }) async {
-    if (!isConfigured || tableId.isEmpty) return const [];
+    if (!isConfigured || tableId.isEmpty) {
+      return const [];
+    }
     final result = await _tables.listRows(
       databaseId: _databaseId,
       tableId: tableId,
@@ -65,7 +67,9 @@ class CricketRepository {
 
   Future<List<Map<String, dynamic>>> getSavedArticles() async {
     final userId = await AppwriteService.instance.currentUserId();
-    if (userId == null) return const [];
+    if (userId == null) {
+      return const [];
+    }
     return _listRows(
       AppwriteService.savedArticlesTableId,
       queries: [Query.equal('userId', userId), Query.orderDesc('savedAt')],
