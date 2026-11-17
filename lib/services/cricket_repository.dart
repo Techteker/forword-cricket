@@ -39,14 +39,23 @@ class CricketRepository {
   Future<List<Map<String, dynamic>>> getMatches() =>
       _listRows(AppwriteService.matchesTableId);
 
+  /// Only editorially approved rows marked "published" are returned.
+  /// The Appwrite table must contain a status column and an index for it.
   Future<List<Map<String, dynamic>>> getPublishedNews() =>
-      _listRows(AppwriteService.newsTableId);
+      _listRows(
+        AppwriteService.newsTableId,
+        queries: [Query.equal('status', 'published')],
+      );
 
   Future<List<Map<String, dynamic>>> getActiveQuizzes() =>
       _listRows(AppwriteService.quizzesTableId);
 
+  /// Gift catalogue rows are visible only while active is true.
   Future<List<Map<String, dynamic>>> getGiftCatalog() =>
-      _listRows(AppwriteService.giftsTableId);
+      _listRows(
+        AppwriteService.giftsTableId,
+        queries: [Query.equal('active', true)],
+      );
 
   Future<List<Map<String, dynamic>>> getLeaderboard(String quizId) =>
       _listRows(
@@ -88,6 +97,18 @@ class CricketRepository {
     if (!isConfigured || AppwriteService.savedArticlesTableId.isEmpty) {
       throw StateError('Saved articles table is not configured.');
     }
+
+    // Avoid creating another bookmark when the same user saves an article twice.
+    final existing = await _listRows(
+      AppwriteService.savedArticlesTableId,
+      queries: [
+        Query.equal('userId', userId),
+        Query.equal('articleId', articleId),
+        Query.limit(1),
+      ],
+    );
+    if (existing.isNotEmpty) return;
+
     await _tables.createRow(
       databaseId: _databaseId,
       tableId: AppwriteService.savedArticlesTableId,
