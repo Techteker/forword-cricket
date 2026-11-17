@@ -482,6 +482,9 @@ class _QuizPageState extends State<QuizPage> {
   int? selected;
   int score = 0;
   bool finished = false;
+  bool submitting = false;
+  String? officialMessage;
+  final List<int> answers = [];
 
   final questions = const [
     ('Which country won the first men’s Cricket World Cup in 1975?', ['India', 'West Indies', 'Australia', 'England'], 1),
@@ -491,13 +494,30 @@ class _QuizPageState extends State<QuizPage> {
     ('How many players are on the fielding side?', ['9', '10', '11', '12'], 2),
   ];
 
-  void next() {
-    if (selected == null) return;
+  Future<void> next() async {
+    if (selected == null || submitting) return;
+    answers.add(selected!);
     if (selected == questions[index].$3) score++;
     if (index == questions.length - 1) {
-      setState(() => finished = true);
+      setState(() => submitting = true);
+      try {
+        officialMessage = await CricketRepository.instance.submitQuizAttempt(
+          quizId: 'daily',
+          answers: answers,
+        );
+      } catch (error) {
+        officialMessage = 'Practice result only. Official submission is unavailable: $error';
+      }
+      if (!mounted) return;
+      setState(() {
+        finished = true;
+        submitting = false;
+      });
     } else {
-      setState(() { index++; selected = null; });
+      setState(() {
+        index++;
+        selected = null;
+      });
     }
   }
 
@@ -540,9 +560,11 @@ class _QuizPageState extends State<QuizPage> {
           ),
         const Spacer(),
         SizedBox(width: double.infinity, child: FilledButton(
-          onPressed: selected == null ? null : next,
+          onPressed: selected == null || submitting ? null : next,
           style: FilledButton.styleFrom(backgroundColor: red, padding: const EdgeInsets.symmetric(vertical: 16)),
-          child: Text(index == questions.length - 1 ? 'Submit answers' : 'Next question'),
+          child: submitting
+              ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2))
+              : Text(index == questions.length - 1 ? 'Submit answers' : 'Next question'),
         )),
         const SizedBox(height: 10),
         const Center(child: Text('One attempt per quiz • Do your best!', style: TextStyle(color: muted, fontSize: 11))),
@@ -561,7 +583,7 @@ class _QuizPageState extends State<QuizPage> {
         Text('$score / ${questions.length}', style: const TextStyle(fontSize: 48, color: gold, fontWeight: FontWeight.w900)),
         const Text('Your practice score', style: TextStyle(color: muted)),
         const SizedBox(height: 18),
-        const Text('This is a demo quiz. Scores and winners are not submitted or stored yet. Official rankings require backend validation.', textAlign: TextAlign.center, style: TextStyle(color: muted, height: 1.5)),
+        Text(officialMessage ?? 'Practice result only. Configure the trusted Appwrite quiz Function to validate and store official scores.', textAlign: TextAlign.center, style: const TextStyle(color: muted, height: 1.5)),
         const SizedBox(height: 24),
         SizedBox(width: double.infinity, child: FilledButton(onPressed: () => Navigator.pop(context), style: FilledButton.styleFrom(backgroundColor: red), child: const Text('Back to home'))),
       ]),
