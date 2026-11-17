@@ -252,7 +252,7 @@ class _HomeScreenState extends State<HomeScreen> {
               _newsTile(
                 (row['title'] ?? 'Cricket update').toString(),
                 '${(row['sourceName'] ?? row['category'] ?? 'CRICKET').toString().toUpperCase()} • ${(row['publishedAt'] ?? '').toString()}',
-                articleId: (row[r'\$id'] ?? row['articleId'] ?? row['title'] ?? '').toString(),
+                articleId: (row[r'$id'] ?? row['articleId'] ?? row['title'] ?? '').toString(),
               )
           else ...[
             _newsTile('India prepare for a high-intensity limited-overs series', 'SAMPLE • TEAM INDIA'),
