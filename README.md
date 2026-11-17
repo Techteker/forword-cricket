@@ -23,5 +23,8 @@ A Flutter cricket knowledge and quiz app with cricket news, live scores, leaderb
 
 See `docs/APPWRITE_SETUP.md` for database tables and permissions. Never put an Appwrite API key in a Flutter client.
 
-## Current build scope
-This first implementation provides a premium responsive app shell, navigation, sample cricket content, quiz flow, result/leaderboard/rewards/news/profile screens, Appwrite client configuration and Google OAuth entry point. Live score/news feeds and production reward issuance require real provider credentials and backend configuration.
+## App pages
+Home, Matches, Match centre, Daily Quiz, Quiz Results, Cricket News, Article details, Gifts & Rewards, Leaderboard, Search, Notifications, Quiz History, Profile, Age Verification, Settings, Contest Rules and Help & Support.
+
+## Delivery status
+The repository currently contains the app shell and initial feature flows. Some pages use demonstration content until the matching Appwrite tables, trusted Functions and approved live-data providers are configured. Do not treat demo fixtures, rankings or quiz results as live or official.
