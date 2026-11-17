@@ -16,6 +16,7 @@ class AppwriteService {
   static const quizzesTableId = String.fromEnvironment('APPWRITE_QUIZZES_TABLE_ID', defaultValue: 'quizzes');
   static const giftsTableId = String.fromEnvironment('APPWRITE_GIFTS_TABLE_ID', defaultValue: 'gift_catalog');
   static const leaderboardTableId = String.fromEnvironment('APPWRITE_LEADERBOARD_TABLE_ID', defaultValue: 'leaderboard_entries');
+  static const savedArticlesTableId = String.fromEnvironment('APPWRITE_SAVED_ARTICLES_TABLE_ID', defaultValue: 'saved_articles');
   static const submitQuizFunctionId = String.fromEnvironment('APPWRITE_SUBMIT_QUIZ_FUNCTION_ID', defaultValue: '');
   static const ageVerificationFunctionId = String.fromEnvironment('APPWRITE_AGE_VERIFY_FUNCTION_ID', defaultValue: '');
 
@@ -34,6 +35,16 @@ class AppwriteService {
       return true;
     } catch (_) {
       return false;
+    }
+  }
+
+  Future<String?> currentUserId() async {
+    if (!isConfigured) return null;
+    try {
+      final user = await account.get();
+      return user.$id;
+    } catch (_) {
+      return null;
     }
   }
 
