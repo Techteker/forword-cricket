@@ -15,6 +15,7 @@ class MoreFeaturesScreen extends StatelessWidget {
       (Icons.leaderboard_rounded, 'Leaderboard', 'View quiz rankings', const LeaderboardScreen()),
       (Icons.history_rounded, 'Quiz history', 'Your previous attempts', const QuizHistoryScreen()),
       (Icons.person_outline_rounded, 'My profile', 'Account and eligibility', const ProfileScreen()),
+      (Icons.verified_user_outlined, 'Age verification', 'Verify 16+ eligibility securely', const AgeVerificationScreen()),
       (Icons.settings_outlined, 'Settings', 'App preferences', const SettingsScreen()),
       (Icons.rule_rounded, 'Contest rules', 'Eligibility and reward terms', const ContestRulesScreen()),
       (Icons.help_outline_rounded, 'Help & support', 'Get help with your account', const HelpScreen()),
@@ -220,6 +221,125 @@ class ProfileScreen extends StatelessWidget {
         const _InfoTile(title: 'Account type', value: 'Google sign-in only'),
         const _InfoTile(title: 'Entry model', value: 'Free entry'),
         const _InfoTile(title: 'Rewards', value: 'Physical gifts only'),
+      ],
+    ),
+  );
+}
+
+class AgeVerificationScreen extends StatefulWidget {
+  const AgeVerificationScreen({super.key});
+
+  @override
+  State<AgeVerificationScreen> createState() => _AgeVerificationScreenState();
+}
+
+class _AgeVerificationScreenState extends State<AgeVerificationScreen> {
+  DateTime? dateOfBirth;
+  bool checking = false;
+  bool verified = false;
+  String? message;
+
+  int _age(DateTime birthDate) {
+    final today = DateTime.now();
+    var years = today.year - birthDate.year;
+    if (today.month < birthDate.month ||
+        (today.month == birthDate.month && today.day < birthDate.day)) {
+      years--;
+    }
+    return years;
+  }
+
+  Future<void> _pickDate() async {
+    final today = DateTime.now();
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime(today.year - 18, today.month, today.day),
+      firstDate: DateTime(1900),
+      lastDate: today,
+      helpText: 'Select your date of birth',
+    );
+    if (picked != null) {
+      setState(() {
+        dateOfBirth = picked;
+        message = null;
+        verified = false;
+      });
+    }
+  }
+
+  Future<void> _verify() async {
+    final dob = dateOfBirth;
+    if (dob == null) {
+      setState(() => message = 'Please select your date of birth first.');
+      return;
+    }
+    if (_age(dob) < 16) {
+      setState(() => message = 'You must be at least 16 years old to participate.');
+      return;
+    }
+    setState(() {
+      checking = true;
+      message = null;
+    });
+    try {
+      final accepted = await CricketRepository.instance.verifyAge(dob);
+      if (!mounted) return;
+      setState(() {
+        verified = accepted;
+        message = accepted
+            ? 'Your 16+ eligibility was confirmed by the server.'
+            : 'Eligibility could not be confirmed. Please contact support.';
+      });
+    } catch (error) {
+      if (!mounted) return;
+      setState(() => message = 'Verification service is not configured: $error');
+    } finally {
+      if (mounted) setState(() => checking = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+    appBar: AppBar(title: const Text('AGE VERIFICATION')),
+    body: ListView(
+      padding: const EdgeInsets.all(20),
+      children: [
+        const Icon(Icons.verified_user_outlined, size: 58, color: gold),
+        const SizedBox(height: 16),
+        const Text('Confirm your eligibility', style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900)),
+        const SizedBox(height: 8),
+        const Text('Users must be 16 years or older. Your date of birth is sent to a trusted Appwrite Function for verification.', style: TextStyle(color: muted, height: 1.5)),
+        const SizedBox(height: 24),
+        OutlinedButton.icon(
+          onPressed: checking ? null : _pickDate,
+          icon: const Icon(Icons.calendar_month),
+          label: Text(dateOfBirth == null
+              ? 'Choose date of birth'
+              : '${dateOfBirth!.day.toString().padLeft(2, '0')}/${dateOfBirth!.month.toString().padLeft(2, '0')}/${dateOfBirth!.year}'),
+        ),
+        if (dateOfBirth != null)
+          Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: Text('Calculated age: ${_age(dateOfBirth!)} years', style: const TextStyle(color: muted)),
+          ),
+        const SizedBox(height: 18),
+        SizedBox(
+          width: double.infinity,
+          child: FilledButton(
+            onPressed: checking || verified ? null : _verify,
+            style: FilledButton.styleFrom(backgroundColor: red, padding: const EdgeInsets.symmetric(vertical: 15)),
+            child: checking
+                ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2))
+                : const Text('Verify eligibility'),
+          ),
+        ),
+        if (message != null)
+          Padding(
+            padding: const EdgeInsets.only(top: 16),
+            child: Text(message!, style: TextStyle(color: verified ? Colors.greenAccent : gold)),
+          ),
+        const SizedBox(height: 16),
+        const Text('The server must store only the minimum verification result needed for contest eligibility. Do not expose full birth dates in public profile data.', style: TextStyle(color: muted, fontSize: 12, height: 1.5)),
       ],
     ),
   );
