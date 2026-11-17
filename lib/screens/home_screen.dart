@@ -363,17 +363,6 @@ class _HomeScreenState extends State<HomeScreen> {
     },
   );
 
-  Widget _stat(String label, String value, IconData icon, Color color) => Container(
-    padding: const EdgeInsets.all(13),
-    decoration: BoxDecoration(color: panel, borderRadius: BorderRadius.circular(17), border: Border.all(color: const Color(0xFF252D3A))),
-    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Icon(icon, color: color, size: 19),
-      const SizedBox(height: 12),
-      Text(value, style: const TextStyle(fontSize: 23, fontWeight: FontWeight.w900)),
-      Text(label, style: const TextStyle(color: muted, fontSize: 8, fontWeight: FontWeight.w800, letterSpacing: .6)),
-    ]),
-  );
-
   Widget _sectionTitle(String title, String? action, VoidCallback? onTap) => Row(children: [
     Expanded(child: Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900))),
     if (action != null) TextButton(onPressed: onTap, child: Text(action)),
@@ -404,20 +393,6 @@ class _HomeScreenState extends State<HomeScreen> {
     const SizedBox(height: 7),
     Text(name, style: const TextStyle(fontWeight: FontWeight.w900)),
   ]);
-
-  Widget _feature(IconData icon, String title, String sub, Color color, VoidCallback tap) => InkWell(
-    onTap: tap,
-    borderRadius: BorderRadius.circular(18),
-    child: Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(color: panel, borderRadius: BorderRadius.circular(18), border: Border.all(color: const Color(0xFF252D3A))),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Icon(icon, color: color, size: 25), const SizedBox(height: 12),
-        Text(title, style: const TextStyle(fontWeight: FontWeight.w900)),
-        Text(sub, style: const TextStyle(color: muted, fontSize: 11)),
-      ]),
-    ),
-  );
 
   Widget _newsTile(String title, String meta, {String? articleId}) => Card(
     margin: const EdgeInsets.only(bottom: 10),
