@@ -15,10 +15,11 @@ A Flutter cricket knowledge and quiz app with cricket news, live scores, leaderb
 
 ## Getting started
 1. Install Flutter stable (Dart 3.10+ recommended).
-2. Run `flutter pub get`.
-3. Run `flutter run --dart-define=APPWRITE_ENDPOINT=https://YOUR_REGION.cloud.appwrite.io/v1 --dart-define=APPWRITE_PROJECT_ID=YOUR_PROJECT_ID`.
-4. Register Android/iOS/Web platforms in Appwrite and enable Google OAuth.
-5. Configure the callback URL and OAuth provider credentials in Appwrite Console.
+2. Generate platform runners once: `flutter create --platforms=android,ios,web . --project-name forword_cricket`.
+3. Run `flutter pub get`.
+4. Run `flutter run --dart-define=APPWRITE_ENDPOINT=https://YOUR_REGION.cloud.appwrite.io/v1 --dart-define=APPWRITE_PROJECT_ID=YOUR_PROJECT_ID`.
+5. Register Android/iOS/Web platforms in Appwrite and enable Google OAuth.
+6. Configure the callback URL and OAuth provider credentials in Appwrite Console.
 
 See `docs/APPWRITE_SETUP.md` for database tables and permissions. Never put an Appwrite API key in a Flutter client.
 
