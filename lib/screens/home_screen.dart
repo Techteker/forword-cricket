@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../app.dart';
 import 'secondary_screens.dart';
+import '../services/cricket_repository.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -165,19 +166,36 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _matches() => ListView(
-    padding: const EdgeInsets.all(18),
-    children: [
-      _pageHeading('Matches', 'Fixtures, match centres and cricket updates.'),
-      const SizedBox(height: 16),
-      _matchCard('IND', 'AUS', 'India vs Australia', '2nd ODI  •  Today, 2:30 PM', 'UPCOMING'),
-      const SizedBox(height: 12),
-      _matchCard('MI', 'CSK', 'Mumbai vs Chennai', 'IPL archive  •  Match centre', 'COMPLETED'),
-      const SizedBox(height: 12),
-      _matchCard('RCB', 'KKR', 'Bengaluru vs Kolkata', 'IPL archive  •  Match centre', 'COMPLETED'),
-      const SizedBox(height: 18),
-      _note('Live score provider is not connected yet. Match cards currently show demonstration data.'),
-    ],
+  Widget _matches() => FutureBuilder<List<Map<String, dynamic>>>(
+    future: CricketRepository.instance.getMatches(),
+    builder: (context, snapshot) {
+      final rows = snapshot.data ?? const <Map<String, dynamic>>[];
+      return ListView(
+        padding: const EdgeInsets.all(18),
+        children: [
+          _pageHeading('Matches', 'Fixtures, match centres and cricket updates.'),
+          const SizedBox(height: 16),
+          if (snapshot.connectionState == ConnectionState.waiting)
+            const LinearProgressIndicator(color: red),
+          if (rows.isNotEmpty)
+            for (final row in rows)
+              _matchCard(
+                (row['teamA'] ?? 'TBD').toString(),
+                (row['teamB'] ?? 'TBD').toString(),
+                (row['title'] ?? '${row['teamA'] ?? 'Team A'} vs ${row['teamB'] ?? 'Team B'}').toString(),
+                (row['startsAt'] ?? row['scoreSummary'] ?? 'Match details').toString(),
+                (row['status'] ?? 'SCHEDULED').toString().toUpperCase(),
+              )
+          else ...[
+            _matchCard('IND', 'AUS', 'India vs Australia', 'Sample fixture • configure Appwrite matches table', 'DEMO'),
+            const SizedBox(height: 12),
+            _matchCard('MI', 'CSK', 'Mumbai vs Chennai', 'IPL sample • configure live score provider', 'DEMO'),
+            const SizedBox(height: 12),
+            _note('These are sample fixtures. Add your Appwrite matches table and an approved cricket data provider for real schedules and scores.'),
+          ],
+        ],
+      );
+    },
   );
 
   Widget _quizHub() => ListView(
@@ -211,32 +229,75 @@ class _HomeScreenState extends State<HomeScreen> {
     ],
   );
 
-  Widget _news() => ListView(
-    padding: const EdgeInsets.all(18),
-    children: [
-      _pageHeading('Cricket News', 'Short reads. Big moments.'),
-      const SizedBox(height: 12),
-      Wrap(spacing: 8, children: ['All', 'Team India', 'IPL', 'International', 'Records'].map((e) => Chip(label: Text(e), backgroundColor: panel)).toList()),
-      _newsTile('India prepare for a high-intensity limited-overs series', 'TEAM INDIA  •  12 MIN AGO'),
-      _newsTile('Young stars to watch in the upcoming domestic season', 'CRICKET  •  1 HOUR AGO'),
-      _newsTile('A look back at five unforgettable World Cup moments', 'HISTORY  •  3 HOURS AGO'),
-      _note('News feed is currently sample content. Connect an approved RSS/API ingestion service to publish verified articles.'),
-    ],
+  Widget _news() => FutureBuilder<List<Map<String, dynamic>>>(
+    future: CricketRepository.instance.getPublishedNews(),
+    builder: (context, snapshot) {
+      final rows = snapshot.data ?? const <Map<String, dynamic>>[];
+      return ListView(
+        padding: const EdgeInsets.all(18),
+        children: [
+          _pageHeading('Cricket News', 'Short reads. Big moments.'),
+          const SizedBox(height: 12),
+          Wrap(
+            spacing: 8,
+            children: ['All', 'Team India', 'IPL', 'International', 'Records']
+                .map((item) => Chip(label: Text(item), backgroundColor: panel))
+                .toList(),
+          ),
+          if (snapshot.connectionState == ConnectionState.waiting)
+            const LinearProgressIndicator(color: red),
+          if (rows.isNotEmpty)
+            for (final row in rows)
+              _newsTile(
+                (row['title'] ?? 'Cricket update').toString(),
+                '${(row['sourceName'] ?? row['category'] ?? 'CRICKET').toString().toUpperCase()} • ${(row['publishedAt'] ?? '').toString()}',
+              )
+          else ...[
+            _newsTile('India prepare for a high-intensity limited-overs series', 'SAMPLE • TEAM INDIA'),
+            _newsTile('Young stars to watch in the upcoming domestic season', 'SAMPLE • CRICKET'),
+            _newsTile('A look back at five unforgettable World Cup moments', 'SAMPLE • HISTORY'),
+            _note('News cards are sample content. Connect the news_articles table and approved RSS/API ingestion to publish verified articles.'),
+          ],
+        ],
+      );
+    },
   );
 
-  Widget _gifts() => ListView(
-    padding: const EdgeInsets.all(18),
-    children: [
-      _pageHeading('Rewards & Gifts', 'Knowledge wins. Gifts are physical.'),
-      const SizedBox(height: 14),
-      _giftCard(Icons.checkroom_rounded, 'Official-style Cricket Jersey', 'Example reward • subject to availability'),
-      _giftCard(Icons.sports_cricket_rounded, 'Cricket Bat', 'Example reward • subject to availability'),
-      _giftCard(Icons.sports_baseball_rounded, 'Team Cap', 'Example reward • subject to availability'),
-      const SizedBox(height: 12),
-      _note('No cash prizes, wallet, deposits or withdrawals. Gift stock, eligibility, winner verification and delivery will be managed by the app team after backend setup.'),
-      const SizedBox(height: 18),
-      OutlinedButton.icon(onPressed: _leaderboard, icon: const Icon(Icons.leaderboard), label: const Text('View leaderboard')),
-    ],
+  Widget _gifts() => FutureBuilder<List<Map<String, dynamic>>>(
+    future: CricketRepository.instance.getGiftCatalog(),
+    builder: (context, snapshot) {
+      final rows = snapshot.data ?? const <Map<String, dynamic>>[];
+      return ListView(
+        padding: const EdgeInsets.all(18),
+        children: [
+          _pageHeading('Rewards & Gifts', 'Knowledge wins. Gifts are physical.'),
+          const SizedBox(height: 14),
+          if (snapshot.connectionState == ConnectionState.waiting)
+            const LinearProgressIndicator(color: red),
+          if (rows.isNotEmpty)
+            for (final row in rows)
+              _giftCard(
+                Icons.card_giftcard_rounded,
+                (row['title'] ?? 'Cricket gift').toString(),
+                (row['description'] ?? 'Physical reward • subject to official rules').toString(),
+              )
+          else ...[
+            _giftCard(Icons.checkroom_rounded, 'Cricket Jersey', 'Sample reward • subject to availability'),
+            _giftCard(Icons.sports_cricket_rounded, 'Cricket Bat', 'Sample reward • subject to availability'),
+            _giftCard(Icons.sports_baseball_rounded, 'Team Cap', 'Sample reward • subject to availability'),
+            _note('Sample gift catalog. Connect the gift_catalog table, stock management and winner fulfilment workflow before launch.'),
+          ],
+          const SizedBox(height: 12),
+          _note('No cash prizes, wallet, deposits or withdrawals. Gift stock, winner verification and delivery must be managed by the app team under published rules.'),
+          const SizedBox(height: 18),
+          OutlinedButton.icon(
+            onPressed: _leaderboard,
+            icon: const Icon(Icons.leaderboard),
+            label: const Text('View leaderboard'),
+          ),
+        ],
+      );
+    },
   );
 
   Widget _stat(String label, String value, IconData icon, Color color) => Container(
