@@ -56,6 +56,7 @@ Use the database and table IDs from your Appwrite project. Create tables with th
 | `APPWRITE_QUIZZES_TABLE_ID` | Quizzes table (default `quizzes`) |
 | `APPWRITE_GIFTS_TABLE_ID` | Gift catalog table (default `gift_catalog`) |
 | `APPWRITE_LEADERBOARD_TABLE_ID` | Leaderboard table (default `leaderboard_entries`) |
+| `APPWRITE_SAVED_ARTICLES_TABLE_ID` | Saved articles table (default `saved_articles`) |
 | `APPWRITE_AGE_VERIFY_FUNCTION_ID` | Trusted Function that checks 16+ eligibility |
 | `APPWRITE_SUBMIT_QUIZ_FUNCTION_ID` | Trusted Function that validates answers and stores a quiz attempt |
 
