@@ -13,7 +13,9 @@ jobs:
         with:
           channel: stable
           cache: true
+      - run: flutter create --platforms=android,ios,web . --project-name forword_cricket
       - run: flutter pub get
       - run: dart format lib test
       - run: flutter analyze
       - run: flutter test
+      - run: flutter build web --release
