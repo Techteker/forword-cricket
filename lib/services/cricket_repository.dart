@@ -52,6 +52,23 @@ class CricketRepository {
         queries: [Query.equal('quizId', quizId), Query.orderAsc('rank')],
       );
 
+  Future<bool> verifyAge(DateTime dateOfBirth) async {
+    final body = await executeTrustedFunction(
+      AppwriteService.ageVerificationFunctionId,
+      {'dateOfBirth': dateOfBirth.toIso8601String()},
+    );
+    final result = jsonDecode(body);
+    return result is Map<String, dynamic> && result['eligible'] == true;
+  }
+
+  Future<String> submitQuizAttempt({
+    required String quizId,
+    required List<int> answers,
+  }) => executeTrustedFunction(
+    AppwriteService.submitQuizFunctionId,
+    {'quizId': quizId, 'answers': answers},
+  );
+
   /// Calls a trusted Function. Never calculate official scores or winners on
   /// the device and never send correct answers to the Flutter client.
   Future<String> executeTrustedFunction(
