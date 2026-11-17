@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../app.dart';
+import 'secondary_screens.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -58,6 +59,24 @@ class _HomeScreenState extends State<HomeScreen> {
             tooltip: 'Profile',
             onPressed: () => _profile(),
             icon: const Icon(Icons.account_circle_outlined),
+          ),
+          PopupMenuButton<String>(
+            tooltip: 'More features',
+            icon: const Icon(Icons.grid_view_rounded),
+            onSelected: (value) {
+              if (value == 'more') {
+                Navigator.push(context, MaterialPageRoute<void>(builder: (_) => const MoreFeaturesScreen()));
+              } else if (value == 'leaderboard') {
+                Navigator.push(context, MaterialPageRoute<void>(builder: (_) => const LeaderboardScreen()));
+              } else if (value == 'rules') {
+                Navigator.push(context, MaterialPageRoute<void>(builder: (_) => const ContestRulesScreen()));
+              }
+            },
+            itemBuilder: (context) => const [
+              PopupMenuItem(value: 'more', child: Text('All pages & features')),
+              PopupMenuItem(value: 'leaderboard', child: Text('Leaderboard')),
+              PopupMenuItem(value: 'rules', child: Text('Contest rules')),
+            ],
           ),
           const SizedBox(width: 6),
         ],
