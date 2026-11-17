@@ -415,22 +415,19 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _startQuiz() async {
     if (!ageConfirmed) {
-      final accepted = await showDialog<bool>(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Age eligibility'),
-          content: const Text('Please confirm that you are 16 years of age or older before entering the quiz.'),
-          actions: [
-            TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Not eligible')),
-            FilledButton(onPressed: () => Navigator.pop(context, true), child: const Text('I am 16+')),
-          ],
+      final eligible = await Navigator.of(context).push<bool>(
+        MaterialPageRoute<bool>(
+          builder: (_) => const AgeVerificationScreen(),
         ),
       );
-      if (accepted != true) return;
+      if (eligible != true) return;
+      if (!mounted) return;
       setState(() => ageConfirmed = true);
     }
     if (!mounted) return;
-    Navigator.of(context).push(MaterialPageRoute(builder: (_) => const QuizPage()));
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(builder: (_) => const QuizPage()),
+    );
   }
 
   void _profile() {
