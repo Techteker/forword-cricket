@@ -252,6 +252,7 @@ class _HomeScreenState extends State<HomeScreen> {
               _newsTile(
                 (row['title'] ?? 'Cricket update').toString(),
                 '${(row['sourceName'] ?? row['category'] ?? 'CRICKET').toString().toUpperCase()} • ${(row['publishedAt'] ?? '').toString()}',
+                articleId: (row[r'\$id'] ?? row['articleId'] ?? row['title'] ?? '').toString(),
               )
           else ...[
             _newsTile('India prepare for a high-intensity limited-overs series', 'SAMPLE • TEAM INDIA'),
@@ -357,7 +358,7 @@ class _HomeScreenState extends State<HomeScreen> {
     ),
   );
 
-  Widget _newsTile(String title, String meta) => Card(
+  Widget _newsTile(String title, String meta, {String? articleId}) => Card(
     margin: const EdgeInsets.only(bottom: 10),
     child: ListTile(
       contentPadding: const EdgeInsets.all(12),
@@ -367,7 +368,11 @@ class _HomeScreenState extends State<HomeScreen> {
       onTap: () => Navigator.push(
         context,
         MaterialPageRoute<void>(
-          builder: (_) => ArticleDetailScreen(title: title, meta: meta),
+          builder: (_) => ArticleDetailScreen(
+            title: title,
+            meta: meta,
+            articleId: articleId ?? title,
+          ),
         ),
       ),
     ),
