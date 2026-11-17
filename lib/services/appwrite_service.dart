@@ -1,4 +1,5 @@
 import 'package:appwrite/appwrite.dart';
+import 'package:appwrite/enums.dart' as enums;
 
 class AppwriteService {
   AppwriteService._();
@@ -47,7 +48,7 @@ class AppwriteService {
     if (!isConfigured) {
       throw StateError('Add APPWRITE_ENDPOINT and APPWRITE_PROJECT_ID using --dart-define.');
     }
-    await account.createOAuth2Session(provider: OAuthProvider.google);
+    await account.createOAuth2Session(provider: enums.OAuthProvider.google);
   }
 
   Future<void> signOut() async {
