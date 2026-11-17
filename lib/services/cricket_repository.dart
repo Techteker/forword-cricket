@@ -56,7 +56,7 @@ class CricketRepository {
     final userId = await AppwriteService.instance.currentUserId();
     if (userId == null) return const [];
     return _listRows(
-      'gift_winners',
+      AppwriteService.giftWinnersTableId,
       queries: [Query.equal('userId', userId), Query.orderDesc('createdAt')],
     );
   }
