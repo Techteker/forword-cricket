@@ -1,5 +1,6 @@
 import 'package:appwrite/appwrite.dart';
 import 'package:appwrite/enums.dart' as enums;
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 class AppwriteService {
   AppwriteService._();
@@ -40,7 +41,16 @@ class AppwriteService {
     if (!isConfigured) {
       throw StateError('Add APPWRITE_ENDPOINT and APPWRITE_PROJECT_ID using --dart-define.');
     }
-    await account.createOAuth2Session(provider: enums.OAuthProvider.google);
+    if (kIsWeb) {
+      final callback = '${Uri.base.origin}/auth.html';
+      await account.createOAuth2Session(
+        provider: enums.OAuthProvider.google,
+        success: callback,
+        failure: callback,
+      );
+    } else {
+      await account.createOAuth2Session(provider: enums.OAuthProvider.google);
+    }
   }
 
   Future<void> signOut() async {
