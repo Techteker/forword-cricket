@@ -11,6 +11,7 @@ class MoreFeaturesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final features = <(IconData, String, String, Widget)>[
       (Icons.search_rounded, 'Search', 'Find cricket news and topics', const SearchFeatureScreen()),
+      (Icons.bookmark_outline_rounded, 'Saved articles', 'Your bookmarked cricket reads', const SavedArticlesScreen()),
       (Icons.notifications_active_outlined, 'Notifications', 'Updates about quizzes and gifts', const NotificationsScreen()),
       (Icons.leaderboard_rounded, 'Leaderboard', 'View quiz rankings', const LeaderboardScreen()),
       (Icons.history_rounded, 'Quiz history', 'Your previous attempts', const QuizHistoryScreen()),
@@ -113,10 +114,11 @@ class _SearchFeatureScreenState extends State<SearchFeatureScreen> {
 }
 
 class ArticleDetailScreen extends StatelessWidget {
-  const ArticleDetailScreen({super.key, required this.title, required this.meta});
+  const ArticleDetailScreen({super.key, required this.title, required this.meta, required this.articleId});
 
   final String title;
   final String meta;
+  final String articleId;
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -140,7 +142,91 @@ class ArticleDetailScreen extends StatelessWidget {
         const Text('Article content will be loaded from the verified news feed. This preview is a placeholder until the RSS ingestion and article detail fields are connected.', style: TextStyle(color: muted, height: 1.6)),
         const SizedBox(height: 20),
         const Text('Forword Cricket publishes short cricket reads. Always check the original publisher for full coverage and updates.', style: TextStyle(color: muted, fontSize: 12, height: 1.5)),
+        const SizedBox(height: 22),
+        SizedBox(
+          width: double.infinity,
+          child: OutlinedButton.icon(
+            onPressed: () async {
+              try {
+                await CricketRepository.instance.saveArticle(
+                  articleId: articleId,
+                  title: title,
+                  sourceName: meta,
+                );
+                if (!context.mounted) return;
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Article saved to your library.')),
+                );
+              } catch (error) {
+                if (!context.mounted) return;
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(error.toString())),
+                );
+              }
+            },
+            icon: const Icon(Icons.bookmark_add_outlined),
+            label: const Text('Save article'),
+          ),
+        ),
       ],
+    ),
+  );
+}
+
+class SavedArticlesScreen extends StatelessWidget {
+  const SavedArticlesScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+    appBar: AppBar(title: const Text('SAVED ARTICLES')),
+    body: FutureBuilder<List<Map<String, dynamic>>>(
+      future: CricketRepository.instance.getSavedArticles(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (snapshot.hasError) {
+          return Center(child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Text(snapshot.error.toString(), textAlign: TextAlign.center),
+          ));
+        }
+        final rows = snapshot.data ?? const <Map<String, dynamic>>[];
+        if (rows.isEmpty) {
+          return const _EmptyState(
+            icon: Icons.bookmark_border_rounded,
+            title: 'No saved articles yet',
+            message: 'Open a cricket news story and tap Save article to keep it here.',
+          );
+        }
+        return ListView.builder(
+          padding: const EdgeInsets.all(16),
+          itemCount: rows.length,
+          itemBuilder: (context, index) {
+            final row = rows[index];
+            final title = (row['title'] ?? 'Cricket article').toString();
+            final meta = (row['sourceName'] ?? 'SAVED ARTICLE').toString();
+            final articleId = (row['articleId'] ?? title).toString();
+            return Card(
+              child: ListTile(
+                leading: const Icon(Icons.bookmark, color: gold),
+                title: Text(title, maxLines: 2, overflow: TextOverflow.ellipsis),
+                subtitle: Text(meta, style: const TextStyle(color: muted)),
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute<void>(
+                    builder: (_) => ArticleDetailScreen(
+                      title: title,
+                      meta: meta,
+                      articleId: articleId,
+                    ),
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
     ),
   );
 }
