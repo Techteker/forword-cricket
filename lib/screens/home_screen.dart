@@ -48,7 +48,8 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             const SizedBox(width: 10),
             const Text('FORWORD', style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 1.3)),
-            const Text(' CRICKET', style: TextStyle(color: gold, fontWeight: FontWeight.w800, letterSpacing: 1)),
+            const SizedBox(width: 4),
+            const Text('CRICKET', style: TextStyle(color: gold, fontWeight: FontWeight.w800, letterSpacing: 1)),
           ],
         ),
         actions: [
