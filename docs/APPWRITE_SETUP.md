@@ -20,7 +20,8 @@ Do not put an Appwrite API key in the Flutter app. The client SDK uses the publi
 1. In Appwrite Console, add Android, iOS and/or Web platform with the exact application identifier/hostname.
 2. Enable Google as an OAuth provider and configure Google OAuth client credentials.
 3. Add the Appwrite success and failure callback URLs required by your platform.
-4. Test Google login on a real device and verify a session is created.
+4. For Flutter Web, deploy the included `web/auth.html` file at the same app origin and register the exact production hostname in Appwrite. The app sends web OAuth success/failure callbacks to `/auth.html`.
+5. Test Google login on a real device and verify a session is created.
 
 ## Suggested TablesDB tables
 Use the database and table IDs from your Appwrite project. Create tables with the following fields:
@@ -57,6 +58,8 @@ Use the database and table IDs from your Appwrite project. Create tables with th
 | `APPWRITE_LEADERBOARD_TABLE_ID` | Leaderboard table (default `leaderboard_entries`) |
 | `APPWRITE_AGE_VERIFY_FUNCTION_ID` | Trusted Function that checks 16+ eligibility |
 | `APPWRITE_SUBMIT_QUIZ_FUNCTION_ID` | Trusted Function that validates answers and stores a quiz attempt |
+
+For web OAuth, Appwrite and the deployed app should use a compatible HTTPS/custom-domain setup so browser cookie restrictions do not block the session. On Android/iOS the SDK uses the `appwrite-callback-<PROJECT_ID>` callback scheme.
 
 The Flutter repository reads public rows from TablesDB. Add the Appwrite `age-verify` Function to validate the date of birth and persist only the minimum eligibility result. Add the `submit-quiz` Function to authenticate the session, enforce one attempt, load correct answers privately, calculate the score on the server, apply tie-break rules and write the leaderboard. The client must never submit its own score or rank. Function IDs can be customised with the defines above.
 
