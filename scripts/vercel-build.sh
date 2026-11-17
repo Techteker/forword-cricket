@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
+export CI=true
 
 FLUTTER_DIR="${HOME}/flutter"
 if [ ! -x "${FLUTTER_DIR}/bin/flutter" ]; then
@@ -7,8 +8,7 @@ if [ ! -x "${FLUTTER_DIR}/bin/flutter" ]; then
 fi
 export PATH="${FLUTTER_DIR}/bin:${PATH}"
 flutter config --no-analytics
-flutter precache --web
-flutter create --platforms=web . --project-name forword_cricket
+flutter create --platforms=web --overwrite --no-pub . --project-name forword_cricket
 flutter pub get
 flutter build web --release \
   --dart-define="APPWRITE_ENDPOINT=${APPWRITE_ENDPOINT:-https://cloud.appwrite.io/v1}" \
