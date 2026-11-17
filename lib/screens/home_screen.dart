@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../app.dart';
 import 'secondary_screens.dart';
 import '../services/cricket_repository.dart';
+import '../services/appwrite_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -414,6 +415,16 @@ class _HomeScreenState extends State<HomeScreen> {
   );
 
   void _startQuiz() async {
+    try {
+      if (!await AppwriteService.instance.hasSession()) {
+        await AppwriteService.instance.signInWithGoogle();
+      }
+      if (!await AppwriteService.instance.hasSession()) return;
+    } catch (error) {
+      if (mounted) _message('Google sign-in is required: $error');
+      return;
+    }
+    if (!mounted) return;
     if (!ageConfirmed) {
       final eligible = await Navigator.of(context).push<bool>(
         MaterialPageRoute<bool>(
