@@ -16,6 +16,7 @@ class AppwriteService {
   static const giftsTableId = String.fromEnvironment('APPWRITE_GIFTS_TABLE_ID', defaultValue: 'gift_catalog');
   static const leaderboardTableId = String.fromEnvironment('APPWRITE_LEADERBOARD_TABLE_ID', defaultValue: 'leaderboard_entries');
   static const submitQuizFunctionId = String.fromEnvironment('APPWRITE_SUBMIT_QUIZ_FUNCTION_ID', defaultValue: '');
+  static const ageVerificationFunctionId = String.fromEnvironment('APPWRITE_AGE_VERIFY_FUNCTION_ID', defaultValue: '');
 
   late final Client client = Client()
     ..setEndpoint(endpoint)
