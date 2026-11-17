@@ -52,6 +52,43 @@ class CricketRepository {
         queries: [Query.equal('quizId', quizId), Query.orderAsc('rank')],
       );
 
+  Future<List<Map<String, dynamic>>> getSavedArticles() async {
+    final userId = await AppwriteService.instance.currentUserId();
+    if (userId == null) return const [];
+    return _listRows(
+      AppwriteService.savedArticlesTableId,
+      queries: [Query.equal('userId', userId), Query.orderDesc('savedAt')],
+    );
+  }
+
+  Future<void> saveArticle({
+    required String articleId,
+    required String title,
+    required String sourceName,
+  }) async {
+    final userId = await AppwriteService.instance.currentUserId();
+    if (userId == null) throw StateError('Sign in with Google to save articles.');
+    if (!isConfigured || AppwriteService.savedArticlesTableId.isEmpty) {
+      throw StateError('Saved articles table is not configured.');
+    }
+    await _tables.createRow(
+      databaseId: _databaseId,
+      tableId: AppwriteService.savedArticlesTableId,
+      rowId: ID.unique(),
+      data: {
+        'userId': userId,
+        'articleId': articleId,
+        'title': title,
+        'sourceName': sourceName,
+        'savedAt': DateTime.now().toUtc().toIso8601String(),
+      },
+      permissions: [
+        Permission.read(Role.user(userId)),
+        Permission.delete(Role.user(userId)),
+      ],
+    );
+  }
+
   Future<bool> verifyAge(DateTime dateOfBirth) async {
     final body = await executeTrustedFunction(
       AppwriteService.ageVerificationFunctionId,
