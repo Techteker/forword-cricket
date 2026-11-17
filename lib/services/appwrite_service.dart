@@ -36,15 +36,6 @@ class AppwriteService {
     }
   }
 
-  Future<User?> currentUser() async {
-    if (!isConfigured) return null;
-    try {
-      return await account.get();
-    } catch (_) {
-      return null;
-    }
-  }
-
   Future<void> signInWithGoogle() async {
     if (!isConfigured) {
       throw StateError('Add APPWRITE_ENDPOINT and APPWRITE_PROJECT_ID using --dart-define.');
