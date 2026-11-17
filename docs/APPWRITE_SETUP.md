@@ -6,7 +6,12 @@ Create an Appwrite project and register each target platform in Console.
 
 ```bash
 flutter pub get
-flutter run --dart-define=APPWRITE_ENDPOINT=https://YOUR_REGION.cloud.appwrite.io/v1 --dart-define=APPWRITE_PROJECT_ID=YOUR_PROJECT_ID
+flutter run \\
+  --dart-define=APPWRITE_ENDPOINT=https://YOUR_REGION.cloud.appwrite.io/v1 \\
+  --dart-define=APPWRITE_PROJECT_ID=YOUR_PROJECT_ID \\
+  --dart-define=APPWRITE_DATABASE_ID=YOUR_DATABASE_ID \\
+  --dart-define=APPWRITE_AGE_VERIFY_FUNCTION_ID=age-verify \\
+  --dart-define=APPWRITE_SUBMIT_QUIZ_FUNCTION_ID=submit-quiz
 ```
 
 Do not put an Appwrite API key in the Flutter app. The client SDK uses the public endpoint and project ID; user data must be protected by Appwrite permissions and trusted server-side Functions for sensitive operations.
@@ -38,4 +43,21 @@ Use the database and table IDs from your Appwrite project. Create tables with th
 - Physical gifts only; no entry fee, betting, wallet, cash prize or withdrawal feature.
 - Publish official contest rules, privacy policy, eligibility, delivery timelines and support contact before launch.
 
-Live score and news APIs, production database IDs, and server-side Functions must be configured separately. The app currently uses local demonstration content until those services are connected.
+## Flutter environment variables
+
+| Define | Purpose |
+|---|---|
+| `APPWRITE_ENDPOINT` | Appwrite API endpoint |
+| `APPWRITE_PROJECT_ID` | Appwrite project ID |
+| `APPWRITE_DATABASE_ID` | TablesDB database ID |
+| `APPWRITE_MATCHES_TABLE_ID` | Matches table (default `matches`) |
+| `APPWRITE_NEWS_TABLE_ID` | News table (default `news_articles`) |
+| `APPWRITE_QUIZZES_TABLE_ID` | Quizzes table (default `quizzes`) |
+| `APPWRITE_GIFTS_TABLE_ID` | Gift catalog table (default `gift_catalog`) |
+| `APPWRITE_LEADERBOARD_TABLE_ID` | Leaderboard table (default `leaderboard_entries`) |
+| `APPWRITE_AGE_VERIFY_FUNCTION_ID` | Trusted Function that checks 16+ eligibility |
+| `APPWRITE_SUBMIT_QUIZ_FUNCTION_ID` | Trusted Function that validates answers and stores a quiz attempt |
+
+The Flutter repository reads public rows from TablesDB. Add the Appwrite `age-verify` Function to validate the date of birth and persist only the minimum eligibility result. Add the `submit-quiz` Function to authenticate the session, enforce one attempt, load correct answers privately, calculate the score on the server, apply tie-break rules and write the leaderboard. The client must never submit its own score or rank. Function IDs can be customised with the defines above.
+
+The current sample matches, sample quiz questions, article cards and sample leaderboard are demonstration-only. Live match data requires a licensed/approved cricket data provider; news requires an approved RSS/API ingestion pipeline. Physical gift fulfilment needs stock management, winner review and delivery tracking. Configure these services and publish final privacy/contest terms before release.
