@@ -52,6 +52,15 @@ class CricketRepository {
         queries: [Query.equal('quizId', quizId), Query.orderAsc('rank')],
       );
 
+  Future<List<Map<String, dynamic>>> getMyGiftWinners() async {
+    final userId = await AppwriteService.instance.currentUserId();
+    if (userId == null) return const [];
+    return _listRows(
+      'gift_winners',
+      queries: [Query.equal('userId', userId), Query.orderDesc('createdAt')],
+    );
+  }
+
   Future<List<Map<String, dynamic>>> getSavedArticles() async {
     final userId = await AppwriteService.instance.currentUserId();
     if (userId == null) return const [];
