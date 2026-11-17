@@ -54,7 +54,9 @@ class CricketRepository {
 
   Future<List<Map<String, dynamic>>> getMyGiftWinners() async {
     final userId = await AppwriteService.instance.currentUserId();
-    if (userId == null) return const [];
+    if (userId == null) {
+      return const [];
+    }
     return _listRows(
       AppwriteService.giftWinnersTableId,
       queries: [Query.equal('userId', userId), Query.orderDesc('createdAt')],
@@ -76,7 +78,9 @@ class CricketRepository {
     required String sourceName,
   }) async {
     final userId = await AppwriteService.instance.currentUserId();
-    if (userId == null) throw StateError('Sign in with Google to save articles.');
+    if (userId == null) {
+      throw StateError('Sign in with Google to save articles.');
+    }
     if (!isConfigured || AppwriteService.savedArticlesTableId.isEmpty) {
       throw StateError('Saved articles table is not configured.');
     }
