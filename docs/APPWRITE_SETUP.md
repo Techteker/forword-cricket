@@ -34,7 +34,7 @@ Use the database and table IDs from your Appwrite project. Create tables with th
 - `leaderboard_entries`: quizId (varchar), userId (varchar), displayName (varchar), score (integer), rank (integer).
 - `news_articles`: title (varchar), summary (text), imageUrl (text), category (varchar), sourceName (varchar), publishedAt (datetime), url (text).
 - `gift_catalog`: title (varchar), description (text), imageUrl (text), stock (integer), active (boolean).
-- `gift_winners`: userId (varchar), quizId (varchar), giftId (varchar), status (varchar), deliveryReference (varchar).
+- `gift_winners`: userId (varchar), quizId (varchar), giftId (varchar), status (varchar), deliveryReference (varchar), createdAt (datetime).
 
 ## Permissions and safety
 - Public read only for published news, active matches, and public quiz metadata.
@@ -57,6 +57,7 @@ Use the database and table IDs from your Appwrite project. Create tables with th
 | `APPWRITE_GIFTS_TABLE_ID` | Gift catalog table (default `gift_catalog`) |
 | `APPWRITE_LEADERBOARD_TABLE_ID` | Leaderboard table (default `leaderboard_entries`) |
 | `APPWRITE_SAVED_ARTICLES_TABLE_ID` | Saved articles table (default `saved_articles`) |
+| `APPWRITE_GIFT_WINNERS_TABLE_ID` | Winner and delivery status table (default `gift_winners`) |
 | `APPWRITE_AGE_VERIFY_FUNCTION_ID` | Trusted Function that checks 16+ eligibility |
 | `APPWRITE_SUBMIT_QUIZ_FUNCTION_ID` | Trusted Function that validates answers and stores a quiz attempt |
 
