@@ -114,7 +114,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         const SizedBox(height: 18),
         Container(
-          height: 248, clipBehavior: Clip.antiAlias,
+          height: 280, clipBehavior: Clip.antiAlias,
           decoration: BoxDecoration(borderRadius: BorderRadius.circular(24), gradient: const LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Color(0xFF76202D), Color(0xFF321722), Color(0xFF121722)]), border: Border.all(color: const Color(0xFF63303A))),
           child: Stack(children: [
             Positioned(right: -20, top: 12, child: Icon(Icons.sports_cricket_rounded, size: 190, color: Colors.white.withValues(alpha: .055))),
